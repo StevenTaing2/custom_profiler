@@ -1,14 +1,21 @@
-#include <timer.hpp>
+#include "timer.hpp"
+#include "collector.hpp"
 
 using namespace std;
 
-Timer::Timer(const char* name) :
-    startTime_ {timerClock::now()},
-    name_ {name}
-{
+static inline uint64_t nowNs() noexcept {
+    return chrono::duration_cast<chrono::nanoseconds>(
+        timerClock::now().time_since_epoch()
+    ).count();
 }
 
-Timer::~Timer(){
-    auto end = timerClock::now();
-    finalDuration_ = std::chrono::duration_cast<std::chrono::milliseconds>(end - startTime_).count();
+Timer::Timer(const char* name) noexcept :
+    startTime_ {nowNs()},
+    name_ {name}
+{
+    Collector::recordEventBegin(name_, startTime_);
+}
+
+Timer::~Timer() noexcept{
+    Collector::recordEventEnd(name_, nowNs());
 }

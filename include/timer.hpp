@@ -8,11 +8,10 @@ using timerClock = std::chrono::steady_clock;
 
 class Timer {
 public:
-    Timer(const char* name);
-    ~Timer();
+    Timer(const char* name) noexcept;
+    ~Timer() noexcept;
 private:
-    std::chrono::time_point<timerClock> startTime_;
-    uint64_t finalDuration_;
+    uint64_t startTime_;
     const char* name_;
 };
 
